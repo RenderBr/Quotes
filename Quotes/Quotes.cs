@@ -1,12 +1,10 @@
 ﻿using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
-using MySql.Web;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Timers;
 using Terraria;
 using TerrariaApi.Server;
 using TShockAPI;
@@ -20,7 +18,7 @@ namespace Quotes
         public override string Name { get { return "Quotes"; } }
         public override string Author { get { return "Zaicon"; } }
         public override string Description { get { return "Allows players to read/save quotes."; } }
-        public override Version Version { get { return new Version(2, 1, 3, 1); } }
+        public override Version Version { get { return new Version(2, 2, 1, 0); } }
 
         List<QuoteClass> quotelist;
         private static IDbConnection db;
@@ -477,7 +475,7 @@ namespace Quotes
 
             SqlTableCreator sqlcreator = new SqlTableCreator(db, db.GetSqlType() == SqlType.Sqlite ? (IQueryBuilder)new SqliteQueryCreator() : new MysqlQueryCreator());
 
-            sqlcreator.EnsureExists(new SqlTable("Quotes",
+            sqlcreator.EnsureTableStructure(new SqlTable("Quotes",
                 new SqlColumn("ID", MySqlDbType.Int32) { Primary = true, Unique = true, Length = 4 },
                 new SqlColumn("Deleted", MySqlDbType.Int32) { Length = 1 },
                 new SqlColumn("Author", MySqlDbType.Text) { Length = 15 },

@@ -13,19 +13,17 @@ namespace Quotes
         public string qtime;
         public string qquote;
         public bool qdeleted;
-        public bool qlocked;
 
         public QuoteClass()
         {
         }
-        public QuoteClass(int ID, string author, string time, string quote, bool deleted, bool locked)
+        public QuoteClass(int ID, string author, string time, string quote, bool deleted)
         {
             qid = ID;
             qauthor = author;
             qtime = time;
             qquote = quote;
             qdeleted = deleted;
-            qlocked = locked;
         }
     }
 }

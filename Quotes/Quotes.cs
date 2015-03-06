@@ -18,7 +18,7 @@ namespace Quotes
         public override string Name { get { return "Quotes"; } }
         public override string Author { get { return "Zaicon"; } }
         public override string Description { get { return "Allows players to read/save quotes."; } }
-        public override Version Version { get { return new Version(2, 2, 1, 0); } }
+        public override Version Version { get { return new Version(2, 3, 0, 0); } }
 
         List<QuoteClass> quotelist;
         private static IDbConnection db;
@@ -65,17 +65,18 @@ namespace Quotes
             if (args.Parameters.Count < 1)
             {
                 args.Player.SendErrorMessage("Invalid syntax:");
-                args.Player.SendErrorMessage("/quote add <quote>");
-                if (args.Player.Group.HasPermission("quotes.admin"))
-                    args.Player.SendErrorMessage("/quote show <quote #>");
-                args.Player.SendErrorMessage("/quote read/del <quote #>");
-                if (args.Player.Group.HasPermission("quotes.admin"))
-                    args.Player.SendErrorMessage("/quote lock <quote #>");
-                args.Player.SendErrorMessage("/quote search <words>");
-                args.Player.SendErrorMessage("/quote total");
-                args.Player.SendErrorMessage("/quote random");
+                args.Player.SendErrorMessage("{0}quote read <quote #>", TShock.Config.CommandSpecifier);
+                args.Player.SendErrorMessage("{0}quote search <words>", TShock.Config.CommandSpecifier);
+                args.Player.SendErrorMessage("{0}quote total", TShock.Config.CommandSpecifier);
+                args.Player.SendErrorMessage("{0}quote random", TShock.Config.CommandSpecifier);
+                if (args.Player.Group.HasPermission("quotes.mod"))
+                {
+                    args.Player.SendErrorMessage("{0}quote add <quote>", TShock.Config.CommandSpecifier);
+                    args.Player.SendErrorMessage("{0}quote <del/show> <quote #>", TShock.Config.CommandSpecifier);
+                }
                 if (args.Player.Group.HasPermission("quotes.purge"))
-                    args.Player.SendErrorMessage("/quote purge");
+                    args.Player.SendErrorMessage("{0}quote purge", TShock.Config.CommandSpecifier);
+
                 return;
             }
             else if (args.Parameters.Count == 1)
@@ -112,22 +113,22 @@ namespace Quotes
 
                     args.Player.SendMessage("[" + readQuote.qtime + "] Quote #" + (randnum + 1).ToString() + " by " + readQuote.qauthor + ": " + readQuote.qquote, Color.LawnGreen);
                 }
-                else if (args.Parameters[0].ToLower() == "purge")
-                    args.Player.SendInfoMessage("Warning: This will permanently remove all deleted quotes. This will also alter the quote numbers. To continue, type /quote purge confirm.");
+                else if (args.Parameters[0].ToLower() == "purge" && args.Player.Group.HasPermission("quotes.purge"))
+                    args.Player.SendInfoMessage("Warning: This will permanently remove all deleted quotes. This will also alter the quote numbers. To continue, type {0}quote purge confirm.", TShock.Config.CommandSpecifier);
                 else
                 {
                     args.Player.SendErrorMessage("Invalid syntax:");
-                    args.Player.SendErrorMessage("/quote add <quote>");
-                    if (args.Player.Group.HasPermission("quotes.admin"))
-                        args.Player.SendErrorMessage("/quote show <quote #>");
-                    args.Player.SendErrorMessage("/quote read/del <quote #>");
-                    if (args.Player.Group.HasPermission("quotes.admin"))
-                        args.Player.SendErrorMessage("/quote lock <quote #>");
-                    args.Player.SendErrorMessage("/quote search <words>");
-                    args.Player.SendErrorMessage("/quote total");
-                    args.Player.SendErrorMessage("/quote random");
+                    args.Player.SendErrorMessage("{0}quote read <quote #>", TShock.Config.CommandSpecifier);
+                    args.Player.SendErrorMessage("{0}quote search <words>", TShock.Config.CommandSpecifier);
+                    args.Player.SendErrorMessage("{0}quote total", TShock.Config.CommandSpecifier);
+                    args.Player.SendErrorMessage("{0}quote random", TShock.Config.CommandSpecifier);
+                    if (args.Player.Group.HasPermission("quotes.mod"))
+                    {
+                        args.Player.SendErrorMessage("{0}quote add <quote>", TShock.Config.CommandSpecifier);
+                        args.Player.SendErrorMessage("{0}quote <del/show> <quote #>", TShock.Config.CommandSpecifier);
+                    }
                     if (args.Player.Group.HasPermission("quotes.purge"))
-                        args.Player.SendErrorMessage("/quote purge");
+                        args.Player.SendErrorMessage("{0}quote purge", TShock.Config.CommandSpecifier);
                     return;
                 }
             }
@@ -152,7 +153,7 @@ namespace Quotes
                     {
                         quotenum--;
                         QuoteClass readQuote = quotelist[quotenum];
-                        if (readQuote.qdeleted && (!args.Player.Group.HasPermission("quotes.mod") && !args.Player.Group.HasPermission("quotes.admin")))
+                        if (readQuote.qdeleted && !args.Player.Group.HasPermission("quotes.mod"))
                         {
                             args.Player.SendErrorMessage("This quote has been deleted!");
                             return;
@@ -184,20 +185,15 @@ namespace Quotes
                     }
                     else
                     {
-                        if (quotelist[quotenum - 1].qauthor != args.Player.UserAccountName && (!args.Player.Group.HasPermission("quotes.mod") && !args.Player.Group.HasPermission("quotes.admin")))
+                        if (quotelist[quotenum - 1].qauthor != args.Player.UserAccountName && !args.Player.Group.HasPermission("quotes.mod"))
                         {
                             args.Player.SendErrorMessage("You do not have permission to delete other users' quotes!");
                             return;
                         }
 
-                        if (quotelist[quotenum - 1].qdeleted == true)
+                        if (quotelist[quotenum - 1].qdeleted)
                         {
                             args.Player.SendErrorMessage("This quote has already been deleted!");
-                            return;
-                        }
-                        else if (quotelist[quotenum - 1].qlocked && !args.Player.Group.HasPermission("quotes.admin"))
-                        {
-                            args.Player.SendErrorMessage("This quote is locked; you cannot delete this quote.");
                             return;
                         }
                         quotelist[quotenum - 1].qdeleted = true;
@@ -213,7 +209,7 @@ namespace Quotes
                 }
                 else if (args.Parameters[0].ToLower() == "show")
                 {
-                    if (!args.Player.Group.HasPermission("quotes.admin"))
+                    if (!args.Player.Group.HasPermission("quotes.mod"))
                     {
                         args.Player.SendErrorMessage("You do not have permission to show deleted quotes.");
                         return;
@@ -248,52 +244,7 @@ namespace Quotes
                         }
                     }
                 }
-                else if (args.Parameters[0].ToLower() == "lock")
-                {
-                    if (!args.Player.Group.HasPermission("quotes.admin"))
-                    {
-                        args.Player.SendErrorMessage("You do not have permission to (un)lock quotes.");
-                        return;
-                    }
-
-                    int quotenum = -1;
-                    bool parsed = false;
-                    parsed = Int32.TryParse(args.Parameters[1], out quotenum);
-                    if (!parsed)
-                    {
-                        args.Player.SendErrorMessage("Invalid quote number!");
-                        return;
-                    }
-                    else if (quotenum > quotelist.Count || quotenum < 1)
-                    {
-                        args.Player.SendErrorMessage("Invalid quote number!");
-                        return;
-                    }
-                    else
-                    {
-                        QuoteClass quote = quotelist[quotenum - 1];
-
-                        if (quote.qdeleted)
-                        {
-                            args.Player.SendErrorMessage("This quote has already been deleted.");
-                            return;
-                        }
-
-                        if (quote.qlocked)
-                        {
-                            quote.qlocked = false;
-                            lockQuote(quotenum, false);
-                            args.Player.SendSuccessMessage("Unlocked quote #" + quotenum.ToString());
-                        }
-                        else
-                        {
-                            quote.qlocked = true;
-                            lockQuote(quotenum, true);
-                            args.Player.SendSuccessMessage("Locked quote #" + quotenum.ToString());
-                        }
-                    }
-                }
-                else if (args.Parameters[0].ToLower() == "purge" && args.Parameters[1].ToLower() == "confirm")
+                else if (args.Parameters[0].ToLower() == "purge" && args.Parameters[1].ToLower() == "confirm" && args.Player.Group.HasPermission("quotes.purge"))
                 {
                     purgeQuotes();
                     args.Player.SendSuccessMessage("Quotes successfully purged.");
@@ -301,15 +252,17 @@ namespace Quotes
                 else
                 {
                     args.Player.SendErrorMessage("Invalid syntax:");
-                    args.Player.SendErrorMessage("/quote add <quote>");
-                    if (args.Player.Group.HasPermission("quotes.admin"))
-                        args.Player.SendErrorMessage("/quote show <quote #>");
-                    args.Player.SendErrorMessage("/quote read/del <quote #>");
-                    if (args.Player.Group.HasPermission("quotes.admin"))
-                        args.Player.SendErrorMessage("/quote lock <quote #>");
-                    args.Player.SendErrorMessage("/quote search <words>");
-                    args.Player.SendErrorMessage("/quote total");
-                    args.Player.SendErrorMessage("/quote random");
+                    args.Player.SendErrorMessage("{0}quote read <quote #>", TShock.Config.CommandSpecifier);
+                    args.Player.SendErrorMessage("{0}quote search <words>", TShock.Config.CommandSpecifier);
+                    args.Player.SendErrorMessage("{0}quote total", TShock.Config.CommandSpecifier);
+                    args.Player.SendErrorMessage("{0}quote random", TShock.Config.CommandSpecifier);
+                    if (args.Player.Group.HasPermission("quotes.mod"))
+                    {
+                        args.Player.SendErrorMessage("{0}quote add <quote>", TShock.Config.CommandSpecifier);
+                        args.Player.SendErrorMessage("{0}quote <del/show> <quote #>", TShock.Config.CommandSpecifier);
+                    }
+                    if (args.Player.Group.HasPermission("quotes.purge"))
+                        args.Player.SendErrorMessage("{0}quote purge", TShock.Config.CommandSpecifier);
                     return;
                 }
             }
@@ -317,7 +270,7 @@ namespace Quotes
             {
                 if (args.Parameters[0].ToLower() == "add")
                 {
-                    if (!args.Player.Group.HasPermission("quotes.add") && !args.Player.Group.HasPermission("quotes.mod") && !args.Player.Group.HasPermission("quotes.admin"))
+                    if (!args.Player.Group.HasPermission("quotes.add") && !args.Player.Group.HasPermission("quotes.mod"))
                     {
                         args.Player.SendErrorMessage("You do not have permission to add quotes.");
                         return;
@@ -326,7 +279,7 @@ namespace Quotes
                     string quote = string.Join(" ", args.Parameters);
                     quote = quote.Replace("add ", "");
 
-                    QuoteClass newQuote = new QuoteClass(quotelist.Count + 1, args.Player.UserAccountName, DateTime.Now.ToString(), quote, false, false);
+                    QuoteClass newQuote = new QuoteClass(quotelist.Count + 1, args.Player.UserAccountName, DateTime.Now.ToString(), quote, false);
 
                     quotelist.Add(newQuote);
                     addQuote(quotelist.Count, newQuote);
@@ -357,14 +310,6 @@ namespace Quotes
                 db.Query("UPDATE Quotes SET Deleted=@0 WHERE ID=@1", 1, delID);
             else
                 db.Query("UPDATE Quotes SET Deleted=@0 WHERE ID=@1", 0, delID);
-        }
-
-        private void lockQuote(int quoteID, bool lockstatus)
-        {
-            if (lockstatus)
-                db.Query("UPDATE Quotes SET Locked=@0 WHERE ID=@1", 1, quoteID);
-            else
-                db.Query("UPDATE Quotes SET Locked=@0 WHERE ID=@1", 0, quoteID);
         }
 
         private void purgeQuotes()
@@ -408,8 +353,7 @@ namespace Quotes
                         qauthor = reader.Get<string>("Author"),
                         qtime = reader.Get<string>("Date"),
                         qquote = reader.Get<string>("Quote"),
-                        qdeleted = reader.Get<int>("Deleted") == 1 ? true : false,
-                        qlocked = reader.Get<int>("Locked") == 1 ? true : false
+                        qdeleted = reader.Get<int>("Deleted") == 1 ? true : false
                     });
                 }
             }
@@ -480,8 +424,7 @@ namespace Quotes
                 new SqlColumn("Deleted", MySqlDbType.Int32) { Length = 1 },
                 new SqlColumn("Author", MySqlDbType.Text) { Length = 15 },
                 new SqlColumn("Date", MySqlDbType.Text) { Length = 30 },
-                new SqlColumn("Quote", MySqlDbType.Text) { Length = 100 },
-                new SqlColumn("Locked", MySqlDbType.Int32) { Length = 1 }));
+                new SqlColumn("Quote", MySqlDbType.Text) { Length = 100 }));
         }
         #endregion
     }

@@ -18,7 +18,7 @@ namespace Quotes
         public override string Name { get { return "Quotes"; } }
         public override string Author { get { return "Zaicon"; } }
         public override string Description { get { return "Allows players to read/save quotes."; } }
-        public override Version Version { get { return new Version(2, 3, 2, 0); } }
+        public override Version Version { get { return new Version(2, 3, 3, 0); } }
 
         List<QuoteClass> quotelist;
         private static IDbConnection db;
@@ -183,7 +183,7 @@ namespace Quotes
                     }
                     else
                     {
-                        if (quotelist[quotenum - 1].qauthor != args.Player.UserAccountName && !args.Player.Group.HasPermission("quotes.mod"))
+                        if (quotelist[quotenum - 1].qauthor != args.Player.User.Name && !args.Player.Group.HasPermission("quotes.mod"))
                         {
                             args.Player.SendErrorMessage("You do not have permission to delete other users' quotes!");
                             return;
@@ -277,7 +277,7 @@ namespace Quotes
                     string quote = string.Join(" ", args.Parameters);
                     quote = quote.Replace("add ", "");
 
-                    QuoteClass newQuote = new QuoteClass(quotelist.Count + 1, args.Player.UserAccountName, DateTime.Now.ToString(), quote, false);
+                    QuoteClass newQuote = new QuoteClass(quotelist.Count + 1, args.Player.User.Name, DateTime.Now.ToString(), quote, false);
 
                     quotelist.Add(newQuote);
                     addQuote(quotelist.Count, newQuote);
@@ -300,7 +300,7 @@ namespace Quotes
        
         private bool addQuote(int newID, QuoteClass newquote)
         {
-            db.Query("INSERT INTO Quotes (ID, Deleted, Author, Date, Quote, Locked) VALUES (@0, @1, @2, @3, @4, @5)", newID, 0, newquote.qauthor, newquote.qtime, newquote.qquote, 0);
+            db.Query("INSERT INTO Quotes (ID, Deleted, Author, Date, Quote) VALUES (@0, @1, @2, @3, @4)", newID, 0, newquote.qauthor, newquote.qtime, newquote.qquote);
             return true;
         }
 

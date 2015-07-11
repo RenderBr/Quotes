@@ -12,13 +12,13 @@ using TShockAPI.DB;
 
 namespace Quotes
 {
-    [ApiVersion(1,17)]
+    [ApiVersion(1,19)]
     public class Quotes : TerrariaPlugin
     {
         public override string Name { get { return "Quotes"; } }
         public override string Author { get { return "Zaicon"; } }
         public override string Description { get { return "Allows players to read/save quotes."; } }
-        public override Version Version { get { return new Version(2, 3, 3, 0); } }
+        public override Version Version { get { return new Version(2, 3, 4, 0); } }
 
         List<QuoteClass> quotelist;
         private static IDbConnection db;
@@ -314,13 +314,6 @@ namespace Quotes
 
         private void purgeQuotes()
         {
-            for (int i = 0; i < quotelist.Count; i++)
-            {
-                if (quotelist[i].qdeleted)
-                {
-                    db.Query("DELETE FROM Quotes WHERE ID=@0", i + 1);
-                }
-            }
             List<QuoteClass> tobedeleted = new List<QuoteClass>();
             foreach (QuoteClass quote in quotelist)
             {
@@ -332,7 +325,7 @@ namespace Quotes
                 quotelist.Remove(quote);
             }
 
-            db.Query("TRUNCATE Quotes");
+            db.Query("DELETE FROM quotes;");
 
             for (int i = 0; i < quotelist.Count; i++)
             {

@@ -12,13 +12,13 @@ using TShockAPI.DB;
 
 namespace Quotes
 {
-    [ApiVersion(1,20)]
+    [ApiVersion(1,21)]
     public class Quotes : TerrariaPlugin
     {
         public override string Name { get { return "Quotes"; } }
         public override string Author { get { return "Zaicon"; } }
         public override string Description { get { return "Allows players to read/save quotes."; } }
-        public override Version Version { get { return new Version(2, 3, 5, 0); } }
+        public override Version Version { get { return new Version(2, 3, 6, 0); } }
 
         List<QuoteClass> quotelist;
         private static IDbConnection db;

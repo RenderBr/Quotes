@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Terraria;
 using TerrariaApi.Server;
 using TShockAPI;
@@ -13,13 +12,13 @@ using TShockAPI.DB;
 
 namespace Quotes
 {
-    [ApiVersion(1,24)]
+    [ApiVersion(1,23)]
     public class Quotes : TerrariaPlugin
     {
         public override string Name { get { return "Quotes"; } }
         public override string Author { get { return "Zaicon"; } }
         public override string Description { get { return "Allows players to read/save quotes."; } }
-        public override Version Version { get { return Assembly.GetExecutingAssembly().GetName().Version; } }
+        public override Version Version { get { return new Version(2, 3, 8, 0); } }
 
         List<QuoteClass> quotelist;
         private static IDbConnection db;

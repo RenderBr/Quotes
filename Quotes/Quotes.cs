@@ -1,4 +1,5 @@
-﻿using Mono.Data.Sqlite;
+﻿using Microsoft.Xna.Framework;
+using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using TShockAPI.DB;
 
 namespace Quotes
 {
-    [ApiVersion(1,25)]
+    [ApiVersion(2,0)]
     public class Quotes : TerrariaPlugin
     {
         public override string Name { get { return "Quotes"; } }

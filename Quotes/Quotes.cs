@@ -14,7 +14,7 @@ using TShockAPI.DB;
 
 namespace Quotes
 {
-    [ApiVersion(2,0)]
+    [ApiVersion(2,1)]
     public class Quotes : TerrariaPlugin
     {
         public override string Name { get { return "Quotes"; } }

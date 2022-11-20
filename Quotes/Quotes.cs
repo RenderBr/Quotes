@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Mono.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -65,17 +65,17 @@ namespace Quotes
             if (args.Parameters.Count < 1)
             {
                 args.Player.SendErrorMessage("Invalid syntax:");
-                args.Player.SendErrorMessage("{0}quote read <quote #>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                args.Player.SendErrorMessage("{0}quote search <words>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                args.Player.SendErrorMessage("{0}quote total", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                args.Player.SendErrorMessage("{0}quote random", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
+                args.Player.SendErrorMessage("{0}quote read <quote #>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                args.Player.SendErrorMessage("{0}quote search <words>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                args.Player.SendErrorMessage("{0}quote total", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                args.Player.SendErrorMessage("{0}quote random", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
                 if (args.Player.Group.HasPermission("quotes.mod"))
                 {
-                    args.Player.SendErrorMessage("{0}quote add <quote>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                    args.Player.SendErrorMessage("{0}quote <del/show> <quote #>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
+                    args.Player.SendErrorMessage("{0}quote add <quote>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                    args.Player.SendErrorMessage("{0}quote <del/show> <quote #>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
                 }
                 if (args.Player.Group.HasPermission("quotes.purge"))
-                    args.Player.SendErrorMessage("{0}quote purge", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
+                    args.Player.SendErrorMessage("{0}quote purge", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
 
                 return;
             }
@@ -114,21 +114,21 @@ namespace Quotes
                     args.Player.SendMessage("[" + readQuote.qtime + "] Quote #" + (randnum + 1).ToString() + " by " + readQuote.qauthor + ": " + readQuote.qquote, Color.LawnGreen);
                 }
                 else if (args.Parameters[0].ToLower() == "purge" && args.Player.Group.HasPermission("quotes.purge"))
-                    args.Player.SendInfoMessage("Warning: This will permanently remove all deleted quotes. This will also alter the quote numbers. To continue, type {0}quote purge confirm.", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
+                    args.Player.SendInfoMessage("Warning: This will permanently remove all deleted quotes. This will also alter the quote numbers. To continue, type {0}quote purge confirm.", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
                 else
                 {
                     args.Player.SendErrorMessage("Invalid syntax:");
-                    args.Player.SendErrorMessage("{0}quote read <quote #>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                    args.Player.SendErrorMessage("{0}quote search <words>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                    args.Player.SendErrorMessage("{0}quote total", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                    args.Player.SendErrorMessage("{0}quote random", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
+                    args.Player.SendErrorMessage("{0}quote read <quote #>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                    args.Player.SendErrorMessage("{0}quote search <words>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                    args.Player.SendErrorMessage("{0}quote total", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                    args.Player.SendErrorMessage("{0}quote random", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
                     if (args.Player.Group.HasPermission("quotes.mod"))
                     {
-                        args.Player.SendErrorMessage("{0}quote add <quote>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                        args.Player.SendErrorMessage("{0}quote <del/show> <quote #>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
+                        args.Player.SendErrorMessage("{0}quote add <quote>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                        args.Player.SendErrorMessage("{0}quote <del/show> <quote #>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
                     }
                     if (args.Player.Group.HasPermission("quotes.purge"))
-                        args.Player.SendErrorMessage("{0}quote purge", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
+                        args.Player.SendErrorMessage("{0}quote purge", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
                     return;
                 }
             }
@@ -185,7 +185,7 @@ namespace Quotes
                     }
                     else
                     {
-                        if (quotelist[quotenum - 1].qauthor != args.Player.User.Name && !args.Player.Group.HasPermission("quotes.mod"))
+                        if (quotelist[quotenum - 1].qauthor != args.Player.Account.Name && !args.Player.Group.HasPermission("quotes.mod"))
                         {
                             args.Player.SendErrorMessage("You do not have permission to delete other users' quotes!");
                             return;
@@ -252,17 +252,17 @@ namespace Quotes
                 else
                 {
                     args.Player.SendErrorMessage("Invalid syntax:");
-                    args.Player.SendErrorMessage("{0}quote read <quote #>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                    args.Player.SendErrorMessage("{0}quote search <words>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                    args.Player.SendErrorMessage("{0}quote total", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                    args.Player.SendErrorMessage("{0}quote random", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
+                    args.Player.SendErrorMessage("{0}quote read <quote #>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                    args.Player.SendErrorMessage("{0}quote search <words>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                    args.Player.SendErrorMessage("{0}quote total", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                    args.Player.SendErrorMessage("{0}quote random", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
                     if (args.Player.Group.HasPermission("quotes.mod"))
                     {
-                        args.Player.SendErrorMessage("{0}quote add <quote>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
-                        args.Player.SendErrorMessage("{0}quote <del/show> <quote #>", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
+                        args.Player.SendErrorMessage("{0}quote add <quote>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
+                        args.Player.SendErrorMessage("{0}quote <del/show> <quote #>", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
                     }
                     if (args.Player.Group.HasPermission("quotes.purge"))
-                        args.Player.SendErrorMessage("{0}quote purge", (args.Silent ? TShock.Config.CommandSilentSpecifier : TShock.Config.CommandSpecifier));
+                        args.Player.SendErrorMessage("{0}quote purge", (args.Silent ? TShock.Config.Settings.CommandSilentSpecifier : TShock.Config.Settings.CommandSpecifier));
                     return;
                 }
             }
@@ -279,14 +279,14 @@ namespace Quotes
                     string quote = string.Join(" ", args.Parameters);
                     quote = quote.Replace("add ", "");
 
-                    QuoteClass newQuote = new QuoteClass(quotelist.Count + 1, args.Player.User.Name, DateTime.Now.ToString(), quote, false);
+                    QuoteClass newQuote = new QuoteClass(quotelist.Count + 1, args.Player.Account.Name, DateTime.Now.ToString(), quote, false);
 
                     quotelist.Add(newQuote);
                     addQuote(quotelist.Count, newQuote);
 
                     args.Player.SendSuccessMessage("You have added quote #{0}!", newQuote.qid);
                     if (!args.Silent)
-                        TSPlayer.All.SendMessage("{0} has added a new quote! Use {2}quote read {1} to view it!".SFormat(args.Player.Name, newQuote.qid, TShock.Config.CommandSpecifier), Color.LawnGreen);
+                        TSPlayer.All.SendMessage("{0} has added a new quote! Use {2}quote read {1} to view it!".SFormat(args.Player.Name, newQuote.qid, TShock.Config.Settings.CommandSpecifier), Color.LawnGreen);
                 }
                 else if (args.Parameters[0].ToLower() == "search")
                 {
@@ -389,18 +389,18 @@ namespace Quotes
         #region Database
         private void DBConnect()
         {
-            switch (TShock.Config.StorageType.ToLower())
+            switch (TShock.Config.Settings.StorageType.ToLower())
             {
                 case "mysql":
-                    string[] dbHost = TShock.Config.MySqlHost.Split(':');
+                    string[] dbHost = TShock.Config.Settings.MySqlHost.Split(':');
                     db = new MySqlConnection()
                     {
                         ConnectionString = string.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};",
                             dbHost[0],
                             dbHost.Length == 1 ? "3306" : dbHost[1],
-                            TShock.Config.MySqlDbName,
-                            TShock.Config.MySqlUsername,
-                            TShock.Config.MySqlPassword)
+                            TShock.Config.Settings.MySqlDbName,
+                            TShock.Config.Settings.MySqlUsername,
+                            TShock.Config.Settings.MySqlPassword)
 
                     };
                     break;

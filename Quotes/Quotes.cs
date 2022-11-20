@@ -407,7 +407,7 @@ namespace Quotes
 
                 case "sqlite":
                     string sql = Path.Combine(TShock.SavePath, "Quotes.sqlite");
-                    db = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
+                    db = new SqliteConnection($"Data Source={sql}");
                     break;
 
             }
